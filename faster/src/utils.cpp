@@ -24,7 +24,7 @@ void printStateVector(std::vector<state>& data)
   }
 }
 
-void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::MarkerArray* m_array, std_msgs::ColorRGBA color,
+void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::msg::MarkerArray* m_array, std_msgs::msg::ColorRGBA color,
                                  int type, std::vector<double> radii)
 {
   if (traj.size() == 0)
@@ -33,7 +33,7 @@ void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::MarkerArr
   }
 
   // printf("In vectorOfVectors2MarkerArray\n");
-  geometry_msgs::Point p_last = eigen2point(traj[0]);
+  geometry_msgs::msg::Point p_last = eigen2point(traj[0]);
 
   bool first_element = true;
   int i = 50000;  // large enough to prevent conflict with other markers
@@ -42,23 +42,23 @@ void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::MarkerArr
   for (const auto& it : traj)
   {
     i++;
-    if (first_element and type == visualization_msgs::Marker::ARROW)  // skip the first element
+    if (first_element and type == visualization_msgs::msg::Marker::ARROW)  // skip the first element
     {
       first_element = false;
       continue;
     }
 
-    visualization_msgs::Marker m;
+    visualization_msgs::msg::Marker m;
     m.type = type;
-    m.action = visualization_msgs::Marker::ADD;
+    m.action = visualization_msgs::msg::Marker::ADD;
     m.id = i;
     m.color = color;
     // m.scale.z = 1;
 
     m.header.frame_id = "world";
-    m.header.stamp = ros::Time::now();
-    geometry_msgs::Point p = eigen2point(it);
-    if (type == visualization_msgs::Marker::ARROW)
+    m.header.stamp = rclcpp::Clock(RCL_STEADY_TIME).now();
+    geometry_msgs::msg::Point p = eigen2point(it);
+    if (type == visualization_msgs::msg::Marker::ARROW)
     {
       m.scale.x = 0.02;
       m.scale.y = 0.04;
@@ -84,9 +84,9 @@ void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::MarkerArr
   }
 }
 
-std_msgs::ColorRGBA getColorJet(double v, double vmin, double vmax)
+std_msgs::msg::ColorRGBA getColorJet(double v, double vmin, double vmax)
 {
-  std_msgs::ColorRGBA c;
+  std_msgs::msg::ColorRGBA c;
   c.r = 1;
   c.g = 1;
   c.b = 1;
@@ -124,54 +124,54 @@ std_msgs::ColorRGBA getColorJet(double v, double vmin, double vmax)
   return (c);
 }
 
-std_msgs::ColorRGBA color(int id)
+std_msgs::msg::ColorRGBA color(int id)
 {
-  std_msgs::ColorRGBA red;
+  std_msgs::msg::ColorRGBA red;
   red.r = 1;
   red.g = 0;
   red.b = 0;
   red.a = 1;
-  std_msgs::ColorRGBA red_trans;
+  std_msgs::msg::ColorRGBA red_trans;
   red_trans.r = 1;
   red_trans.g = 0;
   red_trans.b = 0;
   red_trans.a = 0.7;
-  std_msgs::ColorRGBA red_trans_trans;
+  std_msgs::msg::ColorRGBA red_trans_trans;
   red_trans_trans.r = 1;
   red_trans_trans.g = 0;
   red_trans_trans.b = 0;
   red_trans_trans.a = 0.4;
-  std_msgs::ColorRGBA blue;
+  std_msgs::msg::ColorRGBA blue;
   blue.r = 0;
   blue.g = 0;
   blue.b = 1;
   blue.a = 1;
-  std_msgs::ColorRGBA blue_trans;
+  std_msgs::msg::ColorRGBA blue_trans;
   blue_trans.r = 0;
   blue_trans.g = 0;
   blue_trans.b = 1;
   blue_trans.a = 0.7;
-  std_msgs::ColorRGBA blue_trans_trans;
+  std_msgs::msg::ColorRGBA blue_trans_trans;
   blue_trans_trans.r = 0;
   blue_trans_trans.g = 0;
   blue_trans_trans.b = 1;
   blue_trans_trans.a = 0.4;
-  std_msgs::ColorRGBA blue_light;
+  std_msgs::msg::ColorRGBA blue_light;
   blue_light.r = 0.5;
   blue_light.g = 0.7;
   blue_light.b = 1;
   blue_light.a = 1;
-  std_msgs::ColorRGBA green;
+  std_msgs::msg::ColorRGBA green;
   green.r = 0;
   green.g = 1;
   green.b = 0;
   green.a = 1;
-  std_msgs::ColorRGBA yellow;
+  std_msgs::msg::ColorRGBA yellow;
   yellow.r = 1;
   yellow.g = 1;
   yellow.b = 0;
   yellow.a = 1;
-  std_msgs::ColorRGBA orange_trans;  // orange transparent
+  std_msgs::msg::ColorRGBA orange_trans;  // orange transparent
   orange_trans.r = 1;
   orange_trans.g = 0.5;
   orange_trans.b = 0;
@@ -209,7 +209,7 @@ std_msgs::ColorRGBA color(int id)
       return orange_trans;
       break;
     default:
-      ROS_ERROR("COLOR NOT DEFINED");
+      RCLCPP_ERROR(rclcpp::get_logger("faster_ros_node"),"COLOR NOT DEFINED");
   }
 }
 
@@ -225,7 +225,7 @@ void quaternion2Euler(Eigen::Quaterniond q, double& roll, double& pitch, double&
   quaternion2Euler(tf_q, roll, pitch, yaw);
 }
 
-void quaternion2Euler(geometry_msgs::Quaternion q, double& roll, double& pitch, double& yaw)
+void quaternion2Euler(geometry_msgs::msg::Quaternion q, double& roll, double& pitch, double& yaw)
 {
   tf2::Quaternion tf_q(q.x, q.y, q.z, q.w);
   quaternion2Euler(tf_q, roll, pitch, yaw);
@@ -247,13 +247,13 @@ void saturate(double& var, double min, double max)
   // std::cout << "Value saturated" << var << std::endl;
 }
 
-visualization_msgs::Marker getMarkerSphere(double scale, int my_color)
+visualization_msgs::msg::Marker getMarkerSphere(double scale, int my_color)
 {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = "world";
   marker.id = 0;
-  marker.type = visualization_msgs::Marker::SPHERE;
+  marker.type = visualization_msgs::msg::Marker::SPHERE;
   marker.scale.x = scale;
   marker.scale.y = scale;
   marker.scale.z = scale;
@@ -572,52 +572,50 @@ float solvePolyOrder2(Eigen::Vector3f coeff)
 // coeff is from highest degree to lowest degree. Returns the smallest positive real solution. Returns -1 if a
 // root is imaginary or if it's negative
 
-geometry_msgs::Point pointOrigin()
+geometry_msgs::msg::Point pointOrigin()
 {
-  geometry_msgs::Point tmp;
+  geometry_msgs::msg::Point tmp;
   tmp.x = 0;
   tmp.y = 0;
   tmp.z = 0;
   return tmp;
 }
 
-Eigen::Vector3d vec2eigen(geometry_msgs::Vector3 vector)
+Eigen::Vector3d vec2eigen(geometry_msgs::msg::Vector3 vector)
 {
   Eigen::Vector3d tmp;
   tmp << vector.x, vector.y, vector.z;
   return tmp;
 }
 
-geometry_msgs::Vector3 eigen2rosvector(Eigen::Vector3d vector)
+geometry_msgs::msg::Point eigen2rospoint(const Eigen::Vector3d& v)
 {
-  geometry_msgs::Vector3 tmp;
-  tmp.x = vector(0, 0);
-  tmp.y = vector(1, 0);
-  tmp.z = vector(2, 0);
-  return tmp;
+  geometry_msgs::msg::Point p;
+  p.x = v.x();  p.y = v.y();  p.z = v.z();
+  return p;
 }
 
-geometry_msgs::Point eigen2point(Eigen::Vector3d vector)
+geometry_msgs::msg::Point eigen2point(Eigen::Vector3d vector)
 {
-  geometry_msgs::Point tmp;
+  geometry_msgs::msg::Point tmp;
   tmp.x = vector[0];
   tmp.y = vector[1];
   tmp.z = vector[2];
   return tmp;
 }
 
-geometry_msgs::Vector3 vectorNull()
+geometry_msgs::msg::Vector3 vectorNull()
 {
-  geometry_msgs::Vector3 tmp;
+  geometry_msgs::msg::Vector3 tmp;
   tmp.x = 0;
   tmp.y = 0;
   tmp.z = 0;
   return tmp;
 }
 
-geometry_msgs::Vector3 vectorUniform(double a)
+geometry_msgs::msg::Vector3 vectorUniform(double a)
 {
-  geometry_msgs::Vector3 tmp;
+  geometry_msgs::msg::Vector3 tmp;
   tmp.x = a;
   tmp.y = a;
   tmp.z = a;
@@ -1017,16 +1015,16 @@ vec_Vecf<3> copyJPS(vec_Vecf<3> path)
   return tmp;
 }
 
-visualization_msgs::MarkerArray stateVector2ColoredMarkerArray(const std::vector<state>& data, int type,
+visualization_msgs::msg::MarkerArray stateVector2ColoredMarkerArray(const std::vector<state>& data, int type,
                                                                double max_value)
 {
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
 
   if (data.size() == 0)
   {
     return marker_array;
   }
-  geometry_msgs::Point p_last;
+  geometry_msgs::msg::Point p_last;
   p_last.x = data[0].pos(0);
   p_last.y = data[0].pos(1);
   p_last.z = data[0].pos(2);
@@ -1036,18 +1034,18 @@ visualization_msgs::MarkerArray stateVector2ColoredMarkerArray(const std::vector
   {
     j = j + 1;
     double vel = data[i].vel.norm();
-    visualization_msgs::Marker m;
-    m.type = visualization_msgs::Marker::ARROW;
+    visualization_msgs::msg::Marker m;
+    m.type = visualization_msgs::msg::Marker::ARROW;
     m.header.frame_id = "world";
-    m.header.stamp = ros::Time::now();
-    m.action = visualization_msgs::Marker::ADD;
+    m.header.stamp = rclcpp::Clock(RCL_STEADY_TIME).now();
+    m.action = visualization_msgs::msg::Marker::ADD;
     m.id = j;
     m.color = getColorJet(vel, 0, max_value);  // note that par_.v_max is per axis!
     m.scale.x = 0.15;
     m.scale.y = 0;
     m.scale.z = 0;
     // std::cout << "Mandando bloque" << X.block(i, 0, 1, 3) << std::endl;
-    geometry_msgs::Point p;
+    geometry_msgs::msg::Point p;
     p.x = data[i].pos(0);
     p.y = data[i].pos(1);
     p.z = data[i].pos(2);
@@ -1099,7 +1097,7 @@ Eigen::Vector3d projectPointToBox(Eigen::Vector3d& P1, Eigen::Vector3d& P2, doub
 
   if (intersections.size() == 0)
   {  // There is no intersection
-    ROS_ERROR("This is impossible, there should be an intersection");
+    RCLCPP_ERROR(rclcpp::get_logger("faster_ros_node"),"This is impossible, there should be an intersection");
   }
   std::vector<double> distances;
   // And now take the nearest intersection

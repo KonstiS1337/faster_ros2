@@ -906,7 +906,7 @@ Eigen::Vector3d Faster::getFirstCollisionJPS(vec_Vecf<3>& path, bool* thereIsInt
     else
     {  // There is no neighbours
       *thereIsIntersection = false;
-      ROS_INFO("JPS provided doesn't intersect any obstacles, returning the first element of the path you gave me\n");
+      RCLCPP_INFO(rclcpp::get_logger("ros_faster_node"),"JPS provided doesn't intersect any obstacles, returning the first element of the path you gave me\n");
       result = first_element;
 
       if (type_return == RETURN_INTERSECTION)

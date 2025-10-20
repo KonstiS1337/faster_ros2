@@ -4,11 +4,10 @@
 #include <decomp_geometry/polyhedron.h>
 #include <Eigen/Eigenvalues>
 
-#include <OGRE/OgreVector3.h>
 #include <OGRE/OgreSceneNode.h>
 #include <OGRE/OgreSceneManager.h>
 
-#include <rviz/ogre_helpers/mesh_shape.h>
+#include <rviz_rendering/objects/mesh_shape.hpp>
 
 namespace decomp_rviz_plugins {
   class MeshVisual {
@@ -24,7 +23,7 @@ namespace decomp_rviz_plugins {
       void setColor(float r, float g, float b, float a);
 
     private:
-      std::unique_ptr<rviz::MeshShape> obj_;
+      std::unique_ptr<rviz_rendering::MeshShape> obj_;
 
       Ogre::SceneNode *frame_node_;
 

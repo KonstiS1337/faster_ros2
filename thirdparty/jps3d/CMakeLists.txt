@@ -1,75 +1,81 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.8)
 project(jps3d)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-deprecated-declarations")
+# Use C++11 and show warnings
+add_compile_options(-Wall -Wextra -Wpedantic -Wno-deprecated-declarations)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-IF(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE RelWithDebInfo)
-ENDIF()
+# Default to release build
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
 
-set(BUILD_SHARED_LIBS ON)
-
-
-find_package(catkin REQUIRED COMPONENTS 
-  roscpp
-  pcl_ros
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(pcl_ros REQUIRED)
+find_package(PCL REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(yaml-cpp REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+# Include directories
+include_directories(
+  include
+  ${EIGEN3_INCLUDE_DIR}
+  ${PCL_INCLUDE_DIRS}
 )
-
-FIND_PACKAGE(roscpp  REQUIRED)
-FIND_PACKAGE(Eigen3 REQUIRED)
-FIND_PACKAGE(PkgConfig REQUIRED)
-PKG_CHECK_MODULES(YAMLCPP REQUIRED yaml-cpp)
-
-include_directories(${catkin_INCLUDE_DIRS})
-
-IF(YAMLCPP_FOUND)
-  MESSAGE(STATUS "Found yaml-cpp.")
-ELSE()
-  MESSAGE(FATAL_ERROR "Could not find yaml-cpp.")
-ENDIF()
-
-INCLUDE_DIRECTORIES(include ${EIGEN3_INCLUDE_DIRS} ${PCL_LIBRARY_DIRS})
 
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-add_library(jps_lib src/jps_planner/graph_search.cpp
-  src/jps_planner/jps_planner.cpp ${PCL_LIBRARIES})
+# Add the JPS library
+add_library(jps_lib
+  src/jps_planner/graph_search.cpp
+  src/jps_planner/jps_planner.cpp
+)
 
-#add_library(dmp_lib src/distance_map_planner/graph_search.cpp
-#  src/distance_map_planner/distance_map_planner.cpp ${PCL_LIBRARIES}) 
+ament_target_dependencies(jps_lib
+  rclcpp
+  pcl_ros
+  yaml-cpp
+)
 
+target_link_libraries(jps_lib
+  ${PCL_LIBRARIES}
+  yaml-cpp
+)
+
+# Optional test executable
 add_executable(create_map test/create_map.cpp)
-target_link_libraries(create_map ${YAMLCPP_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(create_map
+  yaml-cpp
+  ${PCL_LIBRARIES}
+)
 
-include(CTest)
+ament_export_dependencies(
+  pcl_ros
+  rclcpp
+  yaml-cpp
+  PCL
+)
+ament_export_include_directories(include)   
+ament_export_libraries(jps_lib)        
+ament_export_targets(jps3dTargets HAS_LIBRARY_TARGET)
 
-#add_executable(test_planner_2d test/test_planner_2d.cpp)
-#target_link_libraries(test_planner_2d jps_lib ${YAMLCPP_LIBRARIES} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
-#add_test(test_planner_2d test_planner_2d ${CMAKE_SOURCE_DIR}/data/corridor.yaml)
-
-#add_executable(test_planner_3d test/test_planner_3d.cpp)
-#target_link_libraries(test_planner_3d jps_lib ${YAMLCPP_LIBRARIES} ${PCL_LIBRARIES})
-#add_test(test_planner_3d test_planner_3d ${CMAKE_SOURCE_DIR}/data/simple3d.yaml)
-
-#add_executable(test_distance_map_planner_2d test/test_distance_map_planner_2d.cpp)
-#target_link_libraries(test_distance_map_planner_2d jps_lib dmp_lib ${YAMLCPP_LIBRARIES} ${Boost_LIBRARIES} ${PCL_LIBRARIES})
-#add_test(test_distance_map_planner_2d test_distance_map_planner_2d ${CMAKE_SOURCE_DIR}/data/corridor.yaml)
-
-
-install(FILES "${PROJECT_NAME}Config.cmake" "${PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION "share/${PROJECT_NAME}/cmake")
-
-#install(TARGETS jps_lib dmp_lib
-#  RUNTIME DESTINATION bin
-#  LIBRARY DESTINATION lib
-#  ARCHIVE DESTINATION lib)
-
-
+# Install targets
 install(TARGETS jps_lib
-  RUNTIME DESTINATION bin
+  EXPORT jps3dTargets          # <-- export the target
   LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
 
-install(DIRECTORY include/jps_basis include/jps_planner include/jps_collision
-  DESTINATION include)
+install(EXPORT jps3dTargets
+  FILE jps3dTargets.cmake
+  NAMESPACE jps3d::            # <-- gives  jps3d::jps_lib
+  DESTINATION share/jps3d/cmake
+)
+
+ament_package()

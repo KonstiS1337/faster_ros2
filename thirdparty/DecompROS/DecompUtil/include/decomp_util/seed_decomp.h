@@ -68,7 +68,7 @@ public:
     }
     else
     {
-      ROS_ERROR("*****Before shrinking: The seed point is outside!*****");
+      RCLCPP_ERROR(rclcpp::get_logger("decomp_util_node"),"*****Before shrinking: The seed point is outside!*****");
     }
 
     // vec_E<Hyperplane<Dim>> *hyperplanes_ptr = &(this->polyhedron_.vs_);
@@ -118,7 +118,7 @@ public:
     }
     else
     {
-      ROS_ERROR("*****After shrinking: The seed point is outside!*****");
+      RCLCPP_ERROR(rclcpp::get_logger("decomp_util_node"),"*****After shrinking: The seed point is outside!*****");
     }
   }
 

@@ -1,33 +1,27 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>faster_msgs</name>
   <version>0.0.0</version>
-  <description>The faster_msgs package</description>
-
-  <maintainer email="jtorde@mit.edu">Jesus Tordesillas Torres</maintainer>
-  <author email="jtorde@mit.edu">Jesus Tordesillas Torres</author> 
+  <description>The faster_msgs package comprissed of all msgs needed for the port from other msg packages.</description>
+  <maintainer email="konstantin.stute@stud.tu-darmstadt.de">konstantin Stute</maintainer>
+  <author email="konstantin.stute@stud.tu-darmstadt.de">konstantin Stute</author> 
   <license>BSD-3</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>message_generation</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>std_srvs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>actionlib_msgs</build_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
-  <run_depend>message_runtime</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>std_srvs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>nav_msgs</run_depend>
-  <run_depend>actionlib_msgs</run_depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>builtin_interfaces</depend>
+  <depend>ros_environment</depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
 
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
+    <build_type>ament_cmake</build_type>
   </export>
 </package>
+

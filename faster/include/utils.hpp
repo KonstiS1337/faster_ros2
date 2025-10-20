@@ -9,16 +9,15 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 #include <iostream>
-#include "ros/ros.h"
-#include <std_msgs/ColorRGBA.h>
-#include <geometry_msgs/Vector3.h>
-#include <geometry_msgs/Point.h>
-#include <visualization_msgs/Marker.h>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/color_rgba.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
+#include <geometry_msgs/msg/point.hpp>
+#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 #include <jps_basis/data_utils.h>
 #include "termcolor.hpp"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#include "visualization_msgs/Marker.h"
-#include "visualization_msgs/MarkerArray.h"
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <pcl/point_types.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include "faster_types.hpp"
@@ -53,24 +52,24 @@ void printStateDeque(std::deque<state>& data);
 
 void printStateVector(std::vector<state>& data);
 
-void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::MarkerArray* m_array, std_msgs::ColorRGBA color,
-                                 int type = visualization_msgs::Marker::ARROW,
+void vectorOfVectors2MarkerArray(vec_Vecf<3> traj, visualization_msgs::msg::MarkerArray* m_array, std_msgs::msg::ColorRGBA color,
+                                 int type = visualization_msgs::msg::Marker::ARROW,
                                  std::vector<double> radii = std::vector<double>());
 
-std_msgs::ColorRGBA getColorJet(double v, double vmin, double vmax);
+std_msgs::msg::ColorRGBA getColorJet(double v, double vmin, double vmax);
 
-std_msgs::ColorRGBA color(int id);
+std_msgs::msg::ColorRGBA color(int id);
 
 //## From Wikipedia - http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 void quaternion2Euler(tf2::Quaternion q, double& roll, double& pitch, double& yaw);
 
 void quaternion2Euler(Eigen::Quaterniond q, double& roll, double& pitch, double& yaw);
 
-void quaternion2Euler(geometry_msgs::Quaternion q, double& roll, double& pitch, double& yaw);
+void quaternion2Euler(geometry_msgs::msg::Quaternion q, double& roll, double& pitch, double& yaw);
 
 void saturate(double& var, double min, double max);
 
-visualization_msgs::Marker getMarkerSphere(double scale, int my_color);
+visualization_msgs::msg::Marker getMarkerSphere(double scale, int my_color);
 
 double angleBetVectors(const Eigen::Vector3d& a, const Eigen::Vector3d& b);
 
@@ -101,17 +100,15 @@ float solvePolyOrder2(Eigen::Vector3f coeff);
 // coeff is from highest degree to lowest degree. Returns the smallest positive real solution. Returns -1 if a
 // root is imaginary or if it's negative
 
-geometry_msgs::Point pointOrigin();
+geometry_msgs::msg::Point pointOrigin();
 
-Eigen::Vector3d vec2eigen(geometry_msgs::Vector3 vector);
+Eigen::Vector3d vec2eigen(geometry_msgs::msg::Vector3 vector);
 
-geometry_msgs::Vector3 eigen2rosvector(Eigen::Vector3d vector);
+geometry_msgs::msg::Point eigen2rospoint(const Eigen::Vector3d& v);
 
-geometry_msgs::Point eigen2point(Eigen::Vector3d vector);
-
-geometry_msgs::Vector3 vectorNull();
-
-geometry_msgs::Vector3 vectorUniform(double a);
+geometry_msgs::msg::Point eigen2point(Eigen::Vector3d vector);
+geometry_msgs::msg::Vector3 vectorNull();
+geometry_msgs::msg::Vector3 vectorUniform(double a);
 
 template <typename T>
 using vec_E = std::vector<T, Eigen::aligned_allocator<T>>;
@@ -176,7 +173,7 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& v)
   return out;
 }
 
-visualization_msgs::MarkerArray stateVector2ColoredMarkerArray(const std::vector<state>& data, int type,
+visualization_msgs::msg::MarkerArray stateVector2ColoredMarkerArray(const std::vector<state>& data, int type,
                                                                double max_value);
 
 // P1-P2 is the direction used for projection. P2 is the goal clicked. wdx, wdy and wdz are the widths of a 3D box
@@ -186,13 +183,20 @@ Eigen::Vector3d projectPointToBox(Eigen::Vector3d& P1, Eigen::Vector3d& P2, doub
 void deleteVertexes(vec_Vecf<3>& JPS_path, int max_value);
 
 template <typename T>
-inline bool safeGetParam(ros::NodeHandle& nh, std::string const& param_name, T& param_value)
+inline bool safeGetParam(const std::shared_ptr<rclcpp::Node> &node, const std::string &param_name, T &param_value)
 {
-  if (!nh.getParam(param_name, param_value))
-  {
-    ROS_ERROR("Failed to find parameter: %s", nh.resolveName(param_name, true).c_str());
-    exit(1);
+  if (!node->has_parameter(param_name)) {
+    RCLCPP_ERROR(node->get_logger(), "Parameter '%s' not declared!", param_name.c_str());
+    rclcpp::shutdown();
+    return false;
   }
+
+  if (!node->get_parameter(param_name, param_value)) {
+    RCLCPP_ERROR(node->get_logger(), "Failed to get parameter: '%s'", param_name.c_str());
+    rclcpp::shutdown();
+    return false;
+  }
+
   return true;
 }
 

@@ -1,42 +1,37 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(decomp_util)
 
-# set default build type
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE RelWithDebInfo)
-endif()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-deprecated-declarations")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(BUILD_SHARED_LIBS ON)
-
+find_package(ament_cmake REQUIRED)
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIRS} include)
 
-include(CTest)
+# Dummy source to make CMake happy
+add_library(${PROJECT_NAME} src/dummy.cpp)
 
-#add_executable(test_seed_decomp test/test_seed_decomp.cpp)
-#target_link_libraries(test_seed_decomp ${Boost_LIBRARIES})
-#add_test(test_seed_decomp test_seed_decomp)
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${EIGEN3_INCLUDE_DIRS}
+)
 
-#add_executable(test_line_segment test/test_line_segment.cpp)
-#target_link_libraries(test_line_segment ${Boost_LIBRARIES})
-#add_test(test_line_segment test_line_segment ${CMAKE_SOURCE_DIR}/data/obstacles.txt)
+ament_target_dependencies(${PROJECT_NAME} Eigen3)
 
-#add_executable(test_ellipsoid_decomp test/test_ellipsoid_decomp.cpp)
-#target_link_libraries(test_ellipsoid_decomp ${Boost_LIBRARIES})
-#add_test(test_ellipsoid_decomp test_ellipsoid_decomp ${CMAKE_SOURCE_DIR}/data/obstacles.txt)
-
-#add_executable(test_iterative_decomp test/test_iterative_decomp.cpp)
-#target_link_libraries(test_iterative_decomp ${Boost_LIBRARIES})
-#add_test(test_iterative_decomp test_iterative_decomp ${CMAKE_SOURCE_DIR}/data/obstacles.txt)
-
-install(FILES "${PROJECT_NAME}Config.cmake" "${PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION "share/${PROJECT_NAME}/cmake")
-
-install(TARGETS
-  RUNTIME DESTINATION bin
+install(TARGETS ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+  RUNTIME DESTINATION bin
+)
 
-install(DIRECTORY include/decomp_basis include/decomp_geometry include/decomp_util
-  DESTINATION include)
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+ament_export_targets(export_${PROJECT_NAME})
+ament_export_include_directories(include)
+ament_export_dependencies(Eigen3)
+
+ament_package()

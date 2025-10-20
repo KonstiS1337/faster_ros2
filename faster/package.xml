@@ -1,33 +1,49 @@
 <?xml version="1.0"?>
-<package>
+<package format="3">
   <name>faster</name>
-  <version>0.0.0</version>
-  <description>The faster package</description>
+  <version>0.1.0</version>
+  <description>Faster trajectory planner using JPS and Gurobi modified for ros2 use</description>
+  <maintainer email="konstantin.stute@stud.tu-darmstadt.de">Konstantin Stute</maintainer>
+  <license>BSD-3-Clause</license>
 
-  <maintainer email="jtorde@mit.edu">Jesus Tordesillas Torres</maintainer>
-  <author email="jtorde@mit.edu">Jesus Tordesillas Torres</author> 
-  <license>BSD-3</license>
+  <!-- Build tool -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>decomp_ros_utils</depend>
+  <depend>decomp_ros_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>pcl_conversions</depend>
+  <depend>tf2_sensor_msgs</depend>
+  <depend>message_filters</depend>
 
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-
-  <build_depend>jps3d</build_depend>
-  <build_depend>jps3d</build_depend>
-
-  <build_depend>snapstack_msgs</build_depend>
-  <build_depend>snapstack_msgs</build_depend>
-
+  <!-- Build dependencies -->
+  <build_depend>rclcpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  <build_depend>faster_msgs</build_depend>
   <build_depend>decomp_util</build_depend>
-  <build_depend>decomp_ros_utils</build_depend>
-  <build_depend>tf2_sensor_msgs</build_depend>
+  <build_depend>jps3d</build_depend>
 
-  <build_depend>message_generation</build_depend>
-  <run_depend>message_runtime</run_depend>
-  <!-- The export tag contains other, unspecified, tags -->
+  <!-- Execution dependencies (same as build, minus ament_cmake) -->
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>pcl_ros</exec_depend>
+  <exec_depend>faster_msgs</exec_depend>
+  <exec_depend>decomp_util</exec_depend>
+  <exec_depend>jps3d</exec_depend>
+
+  <!-- Test dependencies (optional) -->
+  <!-- <test_depend>ament_lint_auto</test_depend> -->
+
+  <!-- Export section -->
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

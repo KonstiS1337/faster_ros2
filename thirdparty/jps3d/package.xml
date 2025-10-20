@@ -1,14 +1,29 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>jps3d</name>
-  <version>1.0.0</version>
+  <version>0.1.0</version>
   <description>The jps3d package</description>
-  <maintainer email="sikang@seas.upenn.edu">sikang</maintainer>
-
+  <maintainer email="konstantin.stute@stud.tu-darmstadt.de">Your Name</maintainer>
   <license>BSD-3-Clause</license>
 
-  <export>
-    <build_type>cmake</build_type>
-  </export>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- Build dependencies -->
+  <build_depend>rclcpp</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  <build_depend>pcl_conversions</build_depend> <!-- often needed for pcl_ros -->
+  <build_depend>eigen3_cmake_module</build_depend>
+  <build_depend>yaml_cpp_vendor</build_depend> <!-- yaml-cpp ROS2 wrapper -->
+
+  <!-- Runtime dependencies -->
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>pcl_ros</exec_depend>
+  <exec_depend>pcl_conversions</exec_depend>
+  <exec_depend>eigen3_cmake_module</exec_depend>
+  <exec_depend>yaml_cpp_vendor</exec_depend>
+
+  <!-- Export section -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

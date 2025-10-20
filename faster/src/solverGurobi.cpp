@@ -10,7 +10,7 @@
 #include "solverGurobi_utils.hpp"
 #include <chrono>
 #include <unistd.h>
-#include <ros/package.h>
+#include <rclcpp/rclcpp.hpp>
 
 mycallback::mycallback()
 {

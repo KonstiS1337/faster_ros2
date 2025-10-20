@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <jps_basis/data_type.h>
-#include "ros/ros.h"
+#include <rclcpp/rclcpp.hpp>
 #include <pcl/kdtree/kdtree_flann.h>
 
 namespace JPS

@@ -7,10 +7,10 @@
  * -------------------------------------------------------------------------- */
 
 #include "jps_manager.hpp"
-#include "geometry_msgs/PointStamped.h"
-#include "geometry_msgs/Twist.h"
-#include "nav_msgs/Path.h"
-#include "visualization_msgs/MarkerArray.h"
+#include "geometry_msgs/msg/point_stamped.hpp"
+#include "geometry_msgs/msg/twist.hpp"
+#include "nav_msgs/msg/path.hpp"
+#include "visualization_msgs/msg/marker_array.hpp"
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/filters/filter.h>
@@ -18,7 +18,7 @@
 #include <pcl/filters/passthrough.h>
 #include <Eigen/StdVector>
 
-#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
+#include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
 
 #include <stdio.h>
 #include <math.h>
@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include <sensor_msgs/point_cloud_conversion.h>
+#include <sensor_msgs/point_cloud_conversion.hpp>
 
 #include "termcolor.hpp"
 
