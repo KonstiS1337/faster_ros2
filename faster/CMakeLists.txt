@@ -38,9 +38,6 @@ include_directories(${DECOMP_ROS_UTILS_INCLUDE_DIRS})
 
 find_package(decomp_util REQUIRED)
 find_package(jps3d REQUIRED)
-message("jps3d found: ${jps3d_FOUND}")
-message("Found jps3d lib  ${jps3d_LIBRARIES}")
-message("Found jps3d inc dirs ${jps3d_INCLUDE_DIRS}")
 # Eigen
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -121,6 +118,12 @@ install(TARGETS ${PROJECT_NAME}_node
 install(DIRECTORY include/
   DESTINATION include/
 )
+
+#Install config
+install(DIRECTORY param/
+  DESTINATION share/${PROJECT_NAME}/param
+)
+
 
 # Export package
 ament_package()

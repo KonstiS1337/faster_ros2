@@ -11,79 +11,106 @@
 // This object is created in the faster_ros_node
 FasterRos::FasterRos() : Node("faster_ros_node"), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
 {
-  auto node_ptr = shared_from_this();
-  param_success_ = safeGetParam(node_ptr, "use_ff", par_.use_ff);
-  param_success_ = safeGetParam(node_ptr, "visual", par_.visual);
-  param_success_ = safeGetParam(node_ptr, "dc", par_.dc);
-  param_success_ = safeGetParam(node_ptr, "goal_radius", par_.goal_radius);
-  param_success_ = safeGetParam(node_ptr, "drone_radius", par_.drone_radius);
-  param_success_ = safeGetParam(node_ptr, "force_goal_height", par_.force_goal_height);
-  param_success_ = safeGetParam(node_ptr, "goal_height", par_.goal_height);
-  param_success_ = safeGetParam(node_ptr, "N_safe", par_.N_safe);
-  param_success_ = safeGetParam(node_ptr, "N_whole", par_.N_whole);
-  param_success_ = safeGetParam(node_ptr, "Ra", par_.Ra);
-  param_success_ = safeGetParam(node_ptr, "w_max", par_.w_max);
-  param_success_ = safeGetParam(node_ptr, "alpha_filter_dyaw", par_.alpha_filter_dyaw);
-  param_success_ = safeGetParam(node_ptr, "z_ground", par_.z_ground);
-  param_success_ = safeGetParam(node_ptr, "z_max", par_.z_max);
-  param_success_ = safeGetParam(node_ptr, "inflation_jps", par_.inflation_jps);
-  param_success_ = safeGetParam(node_ptr, "factor_jps", par_.factor_jps);
-  param_success_ = safeGetParam(node_ptr, "v_max", par_.v_max);
-  param_success_ = safeGetParam(node_ptr, "a_max", par_.a_max);
-  param_success_ = safeGetParam(node_ptr, "j_max", par_.j_max);
-  param_success_ = safeGetParam(node_ptr, "gamma_whole", par_.gamma_whole);
-  param_success_ = safeGetParam(node_ptr, "gammap_whole", par_.gammap_whole);
-  param_success_ = safeGetParam(node_ptr, "increment_whole", par_.increment_whole);
-  param_success_ = safeGetParam(node_ptr, "gamma_safe", par_.gamma_safe);
-  param_success_ = safeGetParam(node_ptr, "gammap_safe", par_.gammap_safe);
-  param_success_ = safeGetParam(node_ptr, "increment_safe", par_.increment_safe);
-  param_success_ = safeGetParam(node_ptr, "delta_a", par_.delta_a);
-  param_success_ = safeGetParam(node_ptr, "delta_H", par_.delta_H);
-  param_success_ = safeGetParam(node_ptr, "max_poly_whole", par_.max_poly_whole);
-  param_success_ = safeGetParam(node_ptr, "max_poly_safe", par_.max_poly_safe);
-  param_success_ = safeGetParam(node_ptr, "dist_max_vertexes", par_.dist_max_vertexes);
-  param_success_ = safeGetParam(node_ptr, "gurobi_threads", par_.gurobi_threads);
-  param_success_ = safeGetParam(node_ptr, "gurobi_verbose", par_.gurobi_verbose);
-  param_success_ = safeGetParam(node_ptr, "use_faster", par_.use_faster);
-  param_success_ = safeGetParam(node_ptr, "is_ground_robot", par_.is_ground_robot);
-
-  // And now obtain the parameters from the mapper
-  std::vector<double> world_dimensions;
-  param_success_ = safeGetParam(node_ptr, "mapper/world_dimensions", world_dimensions);
-  param_success_ = safeGetParam(node_ptr, "mapper/resolution", par_.res);
-
-  par_.wdx = world_dimensions[0];
-  par_.wdy = world_dimensions[1];
-  par_.wdz = world_dimensions[2];
-  if(!param_success_) return;
-
-  RCLCPP_INFO_STREAM(this->get_logger(),bold << green << "world_dimensions=" << world_dimensions << reset << std::endl);
+  this->declare_parameter("use_ff", par_.use_ff);
+  this->declare_parameter("visual", par_.visual);
+  this->declare_parameter("dc", par_.dc);
+  this->declare_parameter("goal_radius", par_.goal_radius);
+  this->declare_parameter("drone_radius", par_.drone_radius);
+  this->declare_parameter("force_goal_height", par_.force_goal_height);
+  this->declare_parameter("goal_height", par_.goal_height);
+  this->declare_parameter("N_safe", par_.N_safe);
+  this->declare_parameter("N_whole", par_.N_whole);
+  this->declare_parameter("Ra", par_.Ra);
+  this->declare_parameter("w_max", par_.w_max);
+  this->declare_parameter("alpha_filter_dyaw", par_.alpha_filter_dyaw);
+  this->declare_parameter("z_ground", par_.z_ground);
+  this->declare_parameter("z_max", par_.z_max);
+  this->declare_parameter("inflation_jps", par_.inflation_jps);
+  this->declare_parameter("factor_jps", par_.factor_jps);
+  this->declare_parameter("v_max", par_.v_max);
+  this->declare_parameter("a_max", par_.a_max);
+  this->declare_parameter("j_max", par_.j_max);
+  this->declare_parameter("gamma_whole", par_.gamma_whole);
+  this->declare_parameter("gammap_whole", par_.gammap_whole);
+  this->declare_parameter("increment_whole", par_.increment_whole);
+  this->declare_parameter("gamma_safe", par_.gamma_safe);
+  this->declare_parameter("gammap_safe", par_.gammap_safe);
+  this->declare_parameter("increment_safe", par_.increment_safe);
+  this->declare_parameter("delta_a", par_.delta_a);
+  this->declare_parameter("delta_H", par_.delta_H);
+  this->declare_parameter("max_poly_whole", par_.max_poly_whole);
+  this->declare_parameter("max_poly_safe", par_.max_poly_safe);
+  this->declare_parameter("dist_max_vertexes", par_.dist_max_vertexes);
+  this->declare_parameter("gurobi_threads", par_.gurobi_threads);
+  this->declare_parameter("gurobi_verbose", par_.gurobi_verbose);
+  this->declare_parameter("use_faster", par_.use_faster);
+  this->declare_parameter("is_ground_robot", par_.is_ground_robot);
+  this->declare_parameter("resolution", par_.res);
+  this->declare_parameter("world_dimensions_x", par_.wdx);
+  this->declare_parameter("world_dimensions_y", par_.wdy);
+  this->declare_parameter("world_dimensions_z", par_.wdz);
+  
+  this->get_parameter("use_ff", par_.use_ff);
+  this->get_parameter("visual", par_.visual);
+  this->get_parameter("dc", par_.dc);
+  this->get_parameter("goal_radius", par_.goal_radius);
+  this->get_parameter("drone_radius", par_.drone_radius);
+  this->get_parameter("force_goal_height", par_.force_goal_height);
+  this->get_parameter("goal_height", par_.goal_height);
+  this->get_parameter("N_safe", par_.N_safe);
+  this->get_parameter("N_whole", par_.N_whole);
+  this->get_parameter("Ra", par_.Ra);
+  this->get_parameter("w_max", par_.w_max);
+  this->get_parameter("alpha_filter_dyaw", par_.alpha_filter_dyaw);
+  this->get_parameter("z_ground", par_.z_ground);
+  this->get_parameter("z_max", par_.z_max);
+  this->get_parameter("inflation_jps", par_.inflation_jps);
+  this->get_parameter("factor_jps", par_.factor_jps);
+  this->get_parameter("v_max", par_.v_max);
+  this->get_parameter("a_max", par_.a_max);
+  this->get_parameter("j_max", par_.j_max);
+  this->get_parameter("gamma_whole", par_.gamma_whole);
+  this->get_parameter("gammap_whole", par_.gammap_whole);
+  this->get_parameter("increment_whole", par_.increment_whole);
+  this->get_parameter("gamma_safe", par_.gamma_safe);
+  this->get_parameter("gammap_safe", par_.gammap_safe);
+  this->get_parameter("increment_safe", par_.increment_safe);
+  this->get_parameter("delta_a", par_.delta_a);
+  this->get_parameter("delta_H", par_.delta_H);
+  this->get_parameter("max_poly_whole", par_.max_poly_whole);
+  this->get_parameter("max_poly_safe", par_.max_poly_safe);
+  this->get_parameter("dist_max_vertexes", par_.dist_max_vertexes);
+  this->get_parameter("gurobi_threads", par_.gurobi_threads);
+  this->get_parameter("gurobi_verbose", par_.gurobi_verbose);
+  this->get_parameter("use_faster", par_.use_faster);
+  this->get_parameter("is_ground_robot", par_.is_ground_robot);
+  this->get_parameter("resolution", par_.res);
+  this->get_parameter("world_dimensions_x", par_.wdx);
+  this->get_parameter("world_dimensions_y", par_.wdy);
+  this->get_parameter("world_dimensions_z", par_.wdz);
+  
+  
+  RCLCPP_INFO_STREAM(this->get_logger(),bold << green << "world_dimensions x:" << par_.wdx << " y:" << par_.wdy<< " z:" << par_.wdz<< reset << std::endl);
   RCLCPP_INFO_STREAM(this->get_logger(),bold << green << "resolution=" << par_.res << reset << std::endl);
-  RCLCPP_INFO_STREAM(this->get_logger(),"Parameters obtained" << std::endl);
-
+  
   if (par_.N_safe <= par_.max_poly_safe + 2)
   {
     RCLCPP_ERROR_STREAM(this->get_logger(),bold << red << "Needed: N_safe>=max_poly+ 2 at least" << reset << std::endl);  // To decrease the probability of not finding a solution
-    rclcpp::shutdown();
     return;
   }
   if (par_.N_whole <= par_.max_poly_whole + 2)
   {
     RCLCPP_ERROR_STREAM(this->get_logger(),bold << red << "Needed: N_whole>=max_poly + 2 at least" << reset
-              << std::endl);  // To decrease the probability of not finding a solution
-    rclcpp::shutdown();
+    << std::endl);  // To decrease the probability of not finding a solution
     return;
   }
-
+  
   if (par_.factor_jps * par_.res / 2.0 > par_.inflation_jps)
   {
     RCLCPP_ERROR_STREAM(this->get_logger(), bold << red << "Needed: par_.factor_jps * par_.res / 2 <= par_.inflation_jps" << reset
-              << std::endl);  // If not JPS will find a solution between the voxels.
-    rclcpp::shutdown();
+    << std::endl);  // If not JPS will find a solution between the voxels.
     return;
   }
-
-
 
   // Initialize FASTER
   faster_ptr_ = std::unique_ptr<Faster>(new Faster(par_));

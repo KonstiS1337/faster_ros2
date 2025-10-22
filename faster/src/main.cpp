@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
 {    
     rclcpp::init(argc, argv);
     std::shared_ptr<FasterRos> node = std::make_shared<FasterRos>();
+    RCLCPP_INFO(node->get_logger(),"Created node successfully");
     if(node->successful_init()) {
         rclcpp::executors::MultiThreadedExecutor executor;
         executor.add_node(node);

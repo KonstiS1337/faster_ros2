@@ -182,22 +182,5 @@ Eigen::Vector3d projectPointToBox(Eigen::Vector3d& P1, Eigen::Vector3d& P2, doub
 
 void deleteVertexes(vec_Vecf<3>& JPS_path, int max_value);
 
-template <typename T>
-inline bool safeGetParam(const std::shared_ptr<rclcpp::Node> &node, const std::string &param_name, T &param_value)
-{
-  if (!node->has_parameter(param_name)) {
-    RCLCPP_ERROR(node->get_logger(), "Parameter '%s' not declared!", param_name.c_str());
-    rclcpp::shutdown();
-    return false;
-  }
-
-  if (!node->get_parameter(param_name, param_value)) {
-    RCLCPP_ERROR(node->get_logger(), "Failed to get parameter: '%s'", param_name.c_str());
-    rclcpp::shutdown();
-    return false;
-  }
-
-  return true;
-}
 
 #endif
